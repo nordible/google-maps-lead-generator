@@ -36,7 +36,7 @@ Before you begin, you will need:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/kaymen99/google-maps-lead-generator.git
+   git clone https://github.com/nordible/google-maps-lead-generator.git
    cd google-maps-lead-generator
    ```
 

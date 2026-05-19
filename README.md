@@ -72,7 +72,7 @@ Clone the repository and install dependencies:
 
 ```bash
 # Clone the repository
-git clone https://github.com/kaymen99/google-maps-lead-generator
+git clone https://github.com/nordible/google-maps-lead-generator
 cd google-maps-lead-generator
 
 # Install dependencies
