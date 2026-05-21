@@ -87,13 +87,24 @@ jobs:
         run: |
           cd dist && zip -r ../GoogleMapsLeadGenerator-${{ matrix.os }}.zip GoogleMapsLeadGenerator
 
-      - name: Upload Release Assets
+      - name: List files for debugging
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path . -Recurse | Select-Object FullName
+
+      - name: Upload Release Assets (Windows)
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && matrix.os == 'windows-latest'
         with:
-          files: |
-            GoogleMapsLeadGenerator-windows.exe
-            GoogleMapsLeadGenerator-ubuntu-latest.zip
-            GoogleMapsLeadGenerator-macos-latest.zip
+          files: dist/GoogleMapsLeadGenerator-windows.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Assets (Unix)
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') && matrix.os != 'windows-latest'
+        with:
+          files: GoogleMapsLeadGenerator-${{ matrix.os }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
