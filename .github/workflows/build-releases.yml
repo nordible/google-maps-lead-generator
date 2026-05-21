@@ -26,6 +26,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then pip install nuitka zstandard; fi
+        shell: bash
       
       - name: Create Streamlit Launcher
         shell: python
@@ -61,24 +63,8 @@ jobs:
 
       - name: Build executable (Windows)
         if: matrix.os == 'windows-latest'
-        uses: Nuitka/Nuitka-Action@main
-        with:
-          nuitka-version: main
-          script-name: launcher.py
-          onefile: true
-          standalone: true
-          include-package: streamlit,langchain_openai,playwright,html2text,openpyxl,pandas
-          include-data-files: |
-            app.py=app.py
-            .env.example=.env.example
-          include-data-dir: src=src
-          output-file: GoogleMapsLeadGenerator-windows.exe
-          output-dir: dist
-          clean-cache: all
-          extra-args: |
-            --windows-company-name=nordible.co
-            --windows-product-name=Googloo Google Maps Lead Generator
-            --windows-file-description=AI-Powered Lead Generation Tool
+        run: |
+          python -m nuitka --onefile --standalone --include-package=streamlit --include-package=langchain_openai --include-package=playwright --include-package=html2text --include-package=openpyxl --include-package=pandas --include-data-files="app.py=app.py" --include-data-files=".env.example=.env.example" --include-data-dir="src=src" --windows-company-name="nordible.co" --windows-product-name="Google Maps Lead Generator" --windows-file-description="AI-Powered Lead Generation Tool" --output-file=GoogleMapsLeadGenerator-windows.exe --output-dir=dist --clean-cache=all launcher.py
 
       - name: Build executable (Unix)
         if: matrix.os != 'windows-latest'
