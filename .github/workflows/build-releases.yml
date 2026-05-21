@@ -89,5 +89,3 @@ jobs:
             GoogleMapsLeadGenerator-macos-latest.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
