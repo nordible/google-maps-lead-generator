@@ -127,11 +127,23 @@ async def main_with_progress(location, search_query, target_leads, should_expand
         remaining_leads = target_leads - total_found_so_far
         pages_needed = min(13, (remaining_leads // 20) + 1)
         
-        places_data = search_places(search_query, coords, pages_needed)
-        if places_data:
-            all_places_data.extend(places_data)
-            current_batch_count = sum(len(p.get('places', [])) for p in places_data)
-            total_found_so_far += current_batch_count
+        try:
+            places_data = search_places(search_query, coords, pages_needed)
+            if places_data:
+                all_places_data.extend(places_data)
+                current_batch_count = sum(len(p.get('places', [])) for p in places_data)
+                total_found_so_far += current_batch_count
+        except Exception as api_err:
+            error_msg = str(api_err)
+            if "credits" in error_msg.lower():
+                st.error("❌ **Out of Credits:** Your Serper account has run out of credits. Please add more credits at [serper.dev](https://serper.dev) to continue.")
+                return None, sub_locations_searched
+            
+            st.error(f"❌ {error_msg}")
+            # Stop the loop if there's a serious API error (like auth)
+            if "Unauthorized" in error_msg:
+                return None, sub_locations_searched
+            continue
         
         if total_found_so_far >= target_leads:
             break
@@ -288,5 +300,16 @@ with st.expander("How do I save my API keys permanently?"):
     OPENROUTER_API_KEY="your_key_here"
     ```
     The app will load these automatically on startup.
+    """)
+
+with st.expander("I am getting a '400 Bad Request' error. How do I fix it?"):
+    st.write("""
+    A **400 Bad Request** error usually means there is a temporary issue with the Serper API's batch processing or your account tier.
+    
+    **Troubleshooting Steps:**
+    1. **Check Credits:** Ensure your Serper account has active credits.
+    2. **Reduce Leads:** Try searching for a smaller number of leads (e.g., 20 or 40) to see if it's a payload size issue.
+    3. **Verify API Key:** Ensure your Serper API key is entered correctly in the sidebar.
+    4. **Contact Support:** If the error persists, there may be a service interruption on Serper's side.
     """)
         

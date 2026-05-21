@@ -54,7 +54,7 @@ async def get_sub_locations(city):
 
 def search_places(query, coords, num_pages=1):
     """
-    Search for places using Serper Maps API.
+    Search for places using Serper Maps API (Batch mode).
     
     Args:
         query (str): Search query (e.g., "restaurants", "dentists")
@@ -65,13 +65,14 @@ def search_places(query, coords, num_pages=1):
         list: List of places data from the API
     """
     payload = []
-    lat, lon = coords['lat'], coords['lon']
+    lat = str(coords['lat']).strip()
+    lon = str(coords['lon']).strip()
     
-    # Create payload for each page
+    # Create batch payload for each page
     for page in range(1, num_pages + 1):
         payload.append({
             "q": query,
-            "ll": f"@{lat},{lon},13z", # Format the location string for Serper API
+            "ll": f"@{lat},{lon},13z",
             "page": page
         })
     
@@ -90,9 +91,16 @@ def search_places(query, coords, num_pages=1):
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Error: API returned status code {response.status_code}")
-            return []
+            try:
+                error_data = response.json()
+                # Handle cases where response might be a list or a dict
+                if isinstance(error_data, list):
+                    error_message = error_data[0].get("message", "Batch request failed")
+                else:
+                    error_message = error_data.get("message", "Unknown error")
+                raise Exception(f"Serper API Error: {error_message} (Status: {response.status_code})")
+            except (ValueError, IndexError):
+                raise Exception(f"Serper API Error: Status {response.status_code}")
             
     except Exception as e:
-        print(f"Error making API request: {e}")
-        return []
+        raise e

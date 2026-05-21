@@ -11,16 +11,23 @@ def build():
     
     # Define the main entry point for the executable
     # We use a wrapper to start streamlit
-    with open("launcher.py", "w") as f:
+    with open("launcher.py", "w", encoding="utf-8") as f:
         f.write("""
 import streamlit.web.cli as stcli
 import os, sys
+import time
 
 def resolve_path(path):
     bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
     return os.path.join(bundle_dir, path)
 
 if __name__ == "__main__":
+    print("--------------------------------------------------")
+    print("🚀 AI-Powered Google Maps Lead Generator")
+    print("--------------------------------------------------")
+    print("📦 Initializing system... (First launch may take 30-60s)")
+    print("🌐 Unpacking dependencies and starting web server...")
+    
     sys.argv = [
         "streamlit",
         "run",
@@ -34,6 +41,12 @@ if __name__ == "__main__":
         'launcher.py',
         '--onefile',
         '--additional-hooks-dir=.',
+        '--collect-all=streamlit',
+        '--collect-all=langchain_openai',
+        '--collect-all=playwright',
+        '--collect-all=html2text',
+        '--collect-all=openpyxl',
+        '--collect-all=pandas',
         '--add-data=app.py;.',
         '--add-data=src;src',
         '--add-data=.env.example;.',
