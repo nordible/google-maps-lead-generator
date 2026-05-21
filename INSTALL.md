@@ -56,8 +56,7 @@ If you invest **$15** ($10 in Serper + $5 in OpenRouter), here is what you can e
 2. **Create a Virtual Environment (Recommended):**
    ```bash
    # Windows
-   python -m venv venv
-   .\venv\Scripts\activate
+   python -m venv venv && venv.\venv\Scripts\activate
 
    # macOS / Linux
    python3 -m venv venv
