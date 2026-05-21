@@ -90,30 +90,31 @@ SERPER_API_KEY=your-serper-api-key
 OPENROUTER_API_KEY=your-openrouter-api-key
 ```
 
-### Running the Tool
+### 🚀 Running the Tool
 
-Edit the parameters directly in `main.py` to customize your search:
+This tool offers three different ways to generate and process leads, depending on your preference:
 
-```python
-# In main.py
-location = "Toronto"       # Location to search into
-search_query = "Realtors" # Local business to search for
-num_pages = 1             # Each page contains 20 results
-```
-
-Then you can run the tool with:
-
-```bash
-# Simply run the main.py file
-python main.py
-```
-
-### Running from Streamlit App
-
-You can also run the tool from a Streamlit app by running:
-
+#### 1️⃣ The Web Interface (Recommended)
+The easiest way to use the tool. It provides a clean dashboard, progress bars, and easy Excel downloads.
 ```bash
 streamlit run app.py
+```
+*A browser window will open automatically where you can enter your search queries, select your LLM, and toggle advanced features like "Expand Search".*
+
+#### 2️⃣ The Interactive CLI (`cli-tool.py`)
+If you prefer working in the terminal, this interactive script will prompt you for your search parameters and run the entire process in your console.
+```bash
+python cli-tool.py
+```
+*It will ask for: Location, Search Query, and Target Number of Leads.*
+
+#### 3️⃣ Bulk Enrichment Utility (`process_from_excel.py`)
+If you already have a list of businesses (e.g., from a previous run or another source) and just want the AI to find their emails and social links *without* hitting the Google Maps API again:
+1. Open `process_from_excel.py`.
+2. Update the `excel_file` variable to point to your `.xlsx` file.
+3. Run the script:
+```bash
+python process_from_excel.py
 ```
 
 ### 📊 **Output Files**

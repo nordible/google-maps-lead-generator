@@ -38,9 +38,15 @@ async def main(location, search_query, num_pages):
     await process_businesses(excel_filename)
 
 if __name__ == "__main__":
-    location = "Toronto" # Location to search into
-    search_query = "Realtors" # Local business to search for
-    num_pages = 1 # Each page contain 20 results
+    print("--------------------------------------------------")
+    print("🛠️ Google Maps Lead Generator (CLI Tool)")
+    print("--------------------------------------------------")
+    location = input("Enter Location (e.g., New York): ") or "Toronto"
+    search_query = input("Enter Search Query (e.g., Realtors): ") or "Realtors"
+    target_leads = int(input("Enter Target Number of Leads (e.g., 50): ") or "20")
+    
+    # Calculate pages (20 results per page)
+    num_pages = max(1, target_leads // 20)
     
     # Run main function
     asyncio.run(main(location, search_query, num_pages))

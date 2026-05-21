@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,13 +27,67 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
       
-      - name: Build executable
+      - name: Create Streamlit Launcher
+        shell: python
         run: |
-          pyinstaller --onefile --name GoogleMapsLeadGenerator main.py
+          import os
+          content = """
+          import streamlit.web.cli as stcli
+          import os, sys
+
+          def resolve_path(path):
+              bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+              return os.path.join(bundle_dir, path)
+
+          if __name__ == "__main__":
+              print("--------------------------------------------------")
+              print("🚀 AI-Powered Google Maps Lead Generator")
+              print("--------------------------------------------------")
+              print("📦 Initializing system... (First launch may take 30-60s)")
+              print("🌐 Unpacking dependencies and starting web server...")
+              
+              sys.argv = [
+                  "streamlit",
+                  "run",
+                  resolve_path("app.py"),
+                  "--global.developmentMode=false",
+              ]
+              sys.exit(stcli.main())
+          """
+          with open("launcher.py", "w", encoding="utf-8") as f:
+              f.write(content.strip())
+
+      - name: Build executable (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          pyinstaller --onedir --additional-hooks-dir=. --collect-all streamlit --collect-all langchain_openai --collect-all playwright --collect-all html2text --collect-all openpyxl --collect-all pandas --add-data "app.py;." --add-data "src;src" --add-data ".env.example;." --name GoogleMapsLeadGenerator --clean launcher.py
       
+      - name: Build executable (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          pyinstaller --onedir --additional-hooks-dir=. --collect-all streamlit --collect-all langchain_openai --collect-all playwright --collect-all html2text --collect-all openpyxl --collect-all pandas --add-data "app.py:." --add-data "src:src" --add-data ".env.example:." --name GoogleMapsLeadGenerator --clean launcher.py
+
+      - name: Create ZIP archive (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/GoogleMapsLeadGenerator -DestinationPath dist/GoogleMapsLeadGenerator-windows.zip
+
+      - name: Create ZIP archive (Unix)
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: |
+          cd dist && zip -r ../GoogleMapsLeadGenerator-${{ matrix.os }}.zip GoogleMapsLeadGenerator
+
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: dist/GoogleMapsLeadGenerator*
+          files: |
+            dist/GoogleMapsLeadGenerator-windows.zip
+            GoogleMapsLeadGenerator-ubuntu-latest.zip
+            GoogleMapsLeadGenerator-macos-latest.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
