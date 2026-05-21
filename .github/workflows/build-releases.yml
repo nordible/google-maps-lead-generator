@@ -36,15 +36,17 @@ jobs:
           import os, sys
 
           def resolve_path(path):
-              bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-              return os.path.join(bundle_dir, path)
+              # Handle both PyInstaller and Nuitka paths
+              if hasattr(sys, '_MEIPASS'):
+                  return os.path.join(sys._MEIPASS, path)
+              return os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
 
           if __name__ == "__main__":
               print("--------------------------------------------------")
               print("🚀 AI-Powered Google Maps Lead Generator")
               print("--------------------------------------------------")
-              print("📦 Initializing system... (First launch may take 30-60s)")
-              print("🌐 Unpacking dependencies and starting web server...")
+              print("📦 Initializing system... (May take a moment)")
+              print("🌐 Starting web server...")
               
               sys.argv = [
                   "streamlit",
@@ -59,19 +61,25 @@ jobs:
 
       - name: Build executable (Windows)
         if: matrix.os == 'windows-latest'
-        run: |
-          pyinstaller --onedir --additional-hooks-dir=. --collect-all streamlit --collect-all langchain_openai --collect-all playwright --collect-all html2text --collect-all openpyxl --collect-all pandas --add-data "app.py;." --add-data "src;src" --add-data ".env.example;." --name GoogleMapsLeadGenerator --clean launcher.py
-      
+        uses: Nuitka/Nuitka-Action@main
+        with:
+          nuitka-version: main
+          script-name: launcher.py
+          onefile: true
+          standalone: true
+          include-package: streamlit,langchain_openai,playwright,html2text,openpyxl,pandas
+          include-data-files: |
+            app.py=app.py
+            .env.example=.env.example
+          include-data-dir: src=src
+          output-file: GoogleMapsLeadGenerator-windows.exe
+          output-dir: dist
+          clean-cache: true
+
       - name: Build executable (Unix)
         if: matrix.os != 'windows-latest'
         run: |
           pyinstaller --onedir --additional-hooks-dir=. --collect-all streamlit --collect-all langchain_openai --collect-all playwright --collect-all html2text --collect-all openpyxl --collect-all pandas --add-data "app.py:." --add-data "src:src" --add-data ".env.example:." --name GoogleMapsLeadGenerator --clean launcher.py
-
-      - name: Create ZIP archive (Windows)
-        if: matrix.os == 'windows-latest'
-        shell: pwsh
-        run: |
-          Compress-Archive -Path dist/GoogleMapsLeadGenerator -DestinationPath dist/GoogleMapsLeadGenerator-windows.zip
 
       - name: Create ZIP archive (Unix)
         if: matrix.os != 'windows-latest'
@@ -84,7 +92,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            dist/GoogleMapsLeadGenerator-windows.zip
+            dist/GoogleMapsLeadGenerator-windows.exe
             GoogleMapsLeadGenerator-ubuntu-latest.zip
             GoogleMapsLeadGenerator-macos-latest.zip
         env:
