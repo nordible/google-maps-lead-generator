@@ -75,6 +75,10 @@ jobs:
           output-file: GoogleMapsLeadGenerator-windows.exe
           output-dir: dist
           clean-cache: all
+          extra-args: |
+            --windows-company-name=nordible.co
+            --windows-product-name=Googloo Google Maps Lead Generator
+            --windows-file-description=AI-Powered Lead Generation Tool
 
       - name: Build executable (Unix)
         if: matrix.os != 'windows-latest'
