@@ -64,7 +64,7 @@ jobs:
       - name: Build executable (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          python -m nuitka --onefile --standalone --include-package=streamlit --include-package=langchain_openai --include-package=playwright --include-package=html2text --include-package=openpyxl --include-package=pandas --include-data-files="app.py=app.py" --include-data-files=".env.example=.env.example" --include-data-dir="src=src" --windows-company-name="nordible.co" --windows-product-name="Google Maps Lead Generator" --windows-file-description="AI-Powered Lead Generation Tool" --output-file=GoogleMapsLeadGenerator-windows.exe --output-dir=dist --clean-cache=all launcher.py
+          python -m nuitka --onefile --standalone --include-package=streamlit --include-package=langchain_openai --include-package=playwright --include-package=html2text --include-package=openpyxl --include-package=pandas --include-data-files="app.py=app.py" --include-data-files=".env.example=.env.example" --include-data-dir="src=src" --windows-company-name="Nordible" --windows-product-name="Google Maps Lead Generator" --windows-file-description="AI-Powered Lead Generation Tool" --windows-file-version="1.0.0.0" --windows-product-version="1.0.0.0" --output-file=GoogleMapsLeadGenerator-windows.exe --output-dir=dist --clean-cache=all launcher.py
 
       - name: Build executable (Unix)
         if: matrix.os != 'windows-latest'
