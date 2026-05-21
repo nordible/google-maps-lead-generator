@@ -79,6 +79,9 @@ def load_excel_data(filename: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame containing the places data
     """
+    if filename is None:
+        raise ValueError("Filename cannot be None")
+
     # Handle paths with or without data directory
     if not filename.startswith('data/'):
         file_path = os.path.join('data', filename)

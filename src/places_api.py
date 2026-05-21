@@ -1,8 +1,11 @@
 import os
 import json
 import requests
-from .utils import USER_AGENTS
+from typing import List, TypedDict
+from .utils import USER_AGENTS, ainvoke_llm
 
+class NeighborhoodsResponse(TypedDict):
+    neighborhoods: List[str]
 
 def get_coordinates(city):
     """
@@ -28,6 +31,25 @@ def get_coordinates(city):
     except Exception as e:
         print(f"Error getting coordinates: {e}")
         return None
+
+async def get_sub_locations(city):
+    """
+    Get a list of neighborhoods/sub-locations for a city using OpenRouter LLM.
+    """
+    try:
+        system_prompt = "You are a geographic expert. Provide a list of major neighborhoods or districts for the given city."
+        user_message = f"List the top 15-20 neighborhoods or districts in {city}. Return only the names as a list."
+        
+        response = await ainvoke_llm(
+            system_prompt=system_prompt,
+            user_message=user_message,
+            response_format=NeighborhoodsResponse
+        )
+        
+        return response.get('neighborhoods', [])
+    except Exception as e:
+        print(f"Error getting sub-locations via LLM: {e}")
+        return []
 
 
 def search_places(query, coords, num_pages=1):

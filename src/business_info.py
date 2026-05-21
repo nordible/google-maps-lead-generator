@@ -52,7 +52,6 @@ If no valid option exists for a category, return an empty string.
     
     # Invoke LLM to get structured response
     response = await ainvoke_llm(
-        model=os.getenv("LLM_MODEL", "gpt-4.1-mini"),
         system_prompt=system_prompt,
         user_message=user_message,
         response_format=BusinessInfo,
@@ -85,7 +84,6 @@ If no domain-based business emails are found, provide any available emails, incl
     
     # Invoke LLM to get structured response
     response = await ainvoke_llm(
-        model=os.getenv("LLM_MODEL", "gpt-4.1-mini"),
         system_prompt=system_prompt,
         user_message=user_message,
         response_format=EmailsResponse,

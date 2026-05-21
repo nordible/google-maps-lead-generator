@@ -40,6 +40,8 @@ The tool workflow is simple:
 
 While other Google Maps scrapers like [Apify's Google Maps Extractor](https://apify.com/compass/google-maps-extractor) or [Crawler Google Places](https://apify.com/compass/crawler-google-places) charge **$5-10 per 1000 results** (depending on the options you choose), this system leverages the Serper API and efficient web scraping to deliver the same results for approximately **$0.2 per 1000 leads** – that's up to **50x cheaper**!
 
+👉 **[View Detailed Competitor Analysis (Apollo, Clay, Apify, Outscraper)](COMPETITOR_ANALYSIS.md)**
+
 Even better, Serper API offers **free credits** when you sign up, making your initial lead generation campaigns essentially **free**!
 
 ## 🛠️ **Project Structure**

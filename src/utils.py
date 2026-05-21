@@ -14,20 +14,29 @@ def get_current_date():
     return datetime.now().strftime("%Y-%m-%d_%H-%M")
 
 async def ainvoke_llm(
-    model,  # Specify the model name from OpenRouter
-    system_prompt,
-    user_message,
+    model=None,  # Now optional, will fallback to env
+    system_prompt="",
+    user_message="",
     response_format=None,
     temperature=0.1
 ):
+    # Get configuration from environment
+    api_base = os.getenv("LLM_API_BASE", "https://openrouter.ai/api/v1")
+    api_key = os.getenv("OPENROUTER_API_KEY", "not-needed")
+    default_model = os.getenv("LLM_MODEL", "meta-llama/llama-3-8b-instruct")
+    
+    # Use provided model or fallback to default
+    target_model = model if model else default_model
+    
     llm = ChatOpenAI(
-        model=model, 
+        model=target_model, 
         temperature=temperature,
-        api_key=os.getenv("OPENROUTER_API_KEY"),
-        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key,
+        base_url=api_base,
     )
     
     # If Response format is provided, use structured output
+    # Note: Local LLMs must support Tool/Function calling or JSON mode
     if response_format:
         llm = llm.with_structured_output(response_format)
     
@@ -40,4 +49,4 @@ async def ainvoke_llm(
     # Invoke LLM asynchronously
     response = await llm.ainvoke(messages)
     
-    return response if response_format else response.content  # Return structured response or string
+    return response if response_format else response.content
