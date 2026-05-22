@@ -98,7 +98,7 @@ python main.py
 
 ### **Option 2: Web Interface (User Friendly)**
 ```bash
-streamlit run app.py
+python -m streamlit run app.py
 ```
 *A browser window will open automatically where you can enter your search queries.*
 
