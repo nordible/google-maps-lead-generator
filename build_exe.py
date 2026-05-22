@@ -71,9 +71,9 @@ if __name__ == "__main__":
 
     PyInstaller.__main__.run(args)
 
-    # 3. Cleanup
-    if os.path.exists("local_launcher.py"):
-        os.remove("local_launcher.py")
+    # 3. Cleanup - Kept for future builds as requested
+    # if os.path.exists("local_launcher.py"):
+    #     os.remove("local_launcher.py")
         
     print("\n✅ Local build complete! Check the 'dist' folder for GoogleMapsLeadGenerator.exe")
 

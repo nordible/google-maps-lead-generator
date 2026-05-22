@@ -125,7 +125,7 @@ async def main_with_progress(location, search_query, target_leads, should_expand
         status.text(f"🔍 Searching for businesses in {sub_loc}...")
         # Calculate pages needed
         remaining_leads = target_leads - total_found_so_far
-        pages_needed = min(13, (remaining_leads // 20) + 1)
+        pages_needed = min(13, (remaining_leads + 19) // 20)
         
         try:
             places_data = search_places(search_query, coords, pages_needed)
@@ -155,7 +155,7 @@ async def main_with_progress(location, search_query, target_leads, should_expand
     # Step 3: Save places data to Excel
     status.text("💾 Saving initial data to Excel...")
     excel_filename = f"data_{search_query}_{location}_{get_current_date()}.xlsx"
-    file_path = save_places_to_excel(all_places_data, excel_filename)
+    file_path = save_places_to_excel(all_places_data, excel_filename, limit=target_leads)
     
     if not file_path:
         st.error("❌ No businesses were found in the search results. Try a different query or location.")

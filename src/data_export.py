@@ -1,13 +1,14 @@
 import os
 import pandas as pd
 
-def save_places_to_excel(places_data, filename):
+def save_places_to_excel(places_data, filename, limit=None):
     """
     Save places data to an Excel file in the 'data' folder.
     
     Args:
         places_data (List[Dict]): List of places data from the Serper Maps API
         filename (str): Name of the Excel file to save
+        limit (int, optional): Maximum number of places to save
     """
     # Create data directory if it doesn't exist
     data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
@@ -26,6 +27,10 @@ def save_places_to_excel(places_data, filename):
     if not all_places:
         print("No places data to save.")
         return
+    
+    # Truncate to limit if provided
+    if limit:
+        all_places = all_places[:limit]
     
     # Create DataFrame with relevant columns
     df = pd.DataFrame([{
