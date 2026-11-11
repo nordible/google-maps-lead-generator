@@ -238,6 +238,18 @@ cd google-maps-lead-generator
 pip install -r requirements.txt
 ```
 
+> [!TIP]
+> **Windows Users (Recommended):**  
+> If Windows **Smart App Control (SAC)** blocks unsigned C-extensions (like `pandas`), run the project inside **WSL 2 (Ubuntu)**:
+> ```bash
+> python3 -m venv venv
+> source venv/bin/activate
+> pip install -r requirements.txt
+> playwright install --with-deps chromium
+> streamlit run app.py
+> ```
+> The web interface will be accessible seamlessly on your Windows browser at `http://localhost:8501`.
+
 ### Set up your API keys
 
 Create a `.env` file in the root directory of the project and add your API keys:
